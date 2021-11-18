@@ -76,6 +76,7 @@ long update_interval = 2000;
 bool view_temp_autoAdjust_interval_call_flg = true;
 
 // cover 1 --> 5, 32 * 24 --> 160 * 120
+// cover 1 --> 6, 32 * 24 -*6-> 192 * 144
 void cover5() {
 	uint8_t x, y;
 	uint16_t pos = 0;
@@ -143,12 +144,16 @@ void drawpixels(float *p, uint8_t rows, uint8_t cols) {
 	msg.setTextColor(TFT_YELLOW);
 	msg.setCursor(11, 3);
 	msg.print("min tmp");
-	msg.setCursor(13, 15);
+	msg.setCursor(13, 3 + 12);
 	msg.printf("%.2fC", min_v);
-	msg.setCursor(11, 27);
+	msg.setCursor(11, 3 + 12 * 2);
 	msg.print("max tmp");
-	msg.setCursor(13, 39);
+	msg.setCursor(13, 3 + 12 * 3);
 	msg.printf("%.2fC", max_v);
+	msg.setCursor(11, 3 + 12 * 4);
+	msg.print("tmp mode");
+	msg.setCursor(13, 3 + 12 * 5);
+	msg.print((String)view_temp_autoAdjust_interval_call_flg);
 
 	msg.pushSprite(COLS_4, 10);
 }
@@ -204,10 +209,43 @@ void setup() {
 	MLX90640_SetResolution(0x33, 0x03);
 
 	// Display bottom side colorList and info
-	M5.Lcd.fillScreen(TFT_BLACK);
+	colorList_add();
+}
 
-	for (int icol = 0; icol <= 127; icol++) {
-		M5.Lcd.drawRect(icol * 2, 127, 2, 12, camColors[icol * 2]);
+void add_maxtemp() { maxtemp = maxtemp + 1; }
+void subtract_mintemp() {
+	if (mintemp <= 0) {
+		mintemp = maxtemp - 1;
+	} else {
+		mintemp--;
+	}
+}
+void view_temp_autoAdjust() {
+	mintemp = min_v - 1;
+	maxtemp = max_v + 1;
+}
+
+void btn_event() {
+	// 電源ボタンによる接続のリセット
+	if (M5.Axp.GetBtnPress() == 0x02) {
+		esp_restart();
+	}
+
+	// 計測温度によるReset settings
+	if (M5.BtnA.pressedFor(1000)) {
+		view_temp_autoAdjust();
+	}
+	// Set Min Value - SortPress // 表示時の最大温度-1
+	if (M5.BtnA.wasPressed()) {
+		subtract_mintemp();
+	}
+
+	// 自動で温度色調の変更を実行するかの切り替え
+	if (M5.BtnB.wasReleasefor(1000)) {	// ms以上押して離したか
+		view_temp_autoAdjust_interval_call_flg = view_temp_autoAdjust_interval_call_flg ? false : true;
+	}
+	if (M5.BtnB.wasPressed()) {	 // 表示時の最大温度+1
+		add_maxtemp();
 	}
 }
 
@@ -217,6 +255,16 @@ void loop() {
 
 	M5.update();
 	display_rotation_horizontal();
+
+	btn_event();  // ボタン動作
+
+	//
+	if (loopTime - prev_loopTime >= update_interval) {
+		if (view_temp_autoAdjust_interval_call_flg) {
+			view_temp_autoAdjust();
+		}
+		prev_loopTime = millis();
+	}
 
 	if (M5.Axp.GetBtnPress() == 0x02) {
 		esp_restart();

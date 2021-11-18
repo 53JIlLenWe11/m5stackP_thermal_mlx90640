@@ -72,6 +72,8 @@ const uint16_t camColors[] = {
 float get_point(float *p, uint8_t rows, uint8_t cols, int8_t x, int8_t y);
 
 long loopTime, startTime, endTime, fps, prev_loopTime;
+long update_interval = 2000;
+bool view_temp_autoAdjust_interval_call_flg = true;
 
 // cover 1 --> 5, 32 * 24 --> 160 * 120
 void cover5() {
@@ -161,9 +163,16 @@ void display_rotation_horizontal() {
 		M5.Lcd.setRotation(rotation);
 		M5.Lcd.fillScreen(TFT_BLACK);
 		now_rotation = rotation;
+		colorList_add();
 	}
 }
 
+void colorList_add() {
+	M5.Lcd.fillScreen(TFT_BLACK);
+	for (int icol = 0; icol <= 127; icol++) {
+		M5.Lcd.drawRect(icol * 2, 127, 2, 12, camColors[icol * 2]);
+	}
+}
 void setup() {
 	M5.begin();
 	M5.IMU.Init();

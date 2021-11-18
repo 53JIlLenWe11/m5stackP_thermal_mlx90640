@@ -71,7 +71,7 @@ const uint16_t camColors[] = {
 
 float get_point(float *p, uint8_t rows, uint8_t cols, int8_t x, int8_t y);
 
-long loopTime, startTime, endTime, fps;
+long loopTime, startTime, endTime, fps, prev_loopTime;
 
 // cover 1 --> 5, 32 * 24 --> 160 * 120
 void cover5() {
@@ -151,8 +151,22 @@ void drawpixels(float *p, uint8_t rows, uint8_t cols) {
 	msg.pushSprite(COLS_4, 10);
 }
 
+// 横
+int now_rotation = 1;
+void display_rotation_horizontal() {
+	float pitch, roll, yaw;
+	M5.IMU.getAhrsData(&pitch, &roll, &yaw);
+	int rotation = (pitch < 0) ? 1 : 3;
+	if (now_rotation != rotation) {
+		M5.Lcd.setRotation(rotation);
+		M5.Lcd.fillScreen(TFT_BLACK);
+		now_rotation = rotation;
+	}
+}
+
 void setup() {
 	M5.begin();
+	M5.IMU.Init();
 
 	// Increase I2C clock speed to 450kHz
 	Wire.begin(0, 26, 400000);
@@ -193,6 +207,8 @@ void loop() {
 	startTime = loopTime;
 
 	M5.update();
+	display_rotation_horizontal();
+
 	if (M5.Axp.GetBtnPress() == 0x02) {
 		esp_restart();
 	}

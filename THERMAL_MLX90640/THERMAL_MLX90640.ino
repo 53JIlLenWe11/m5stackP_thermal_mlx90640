@@ -14,6 +14,9 @@
 TFT_eSprite img = TFT_eSprite(&M5.Lcd);
 TFT_eSprite msg = TFT_eSprite(&M5.Lcd);
 
+#include "Battery.h"
+Battery battery = Battery();
+
 #define TA_SHIFT 8	// Default shift for MLX90640 in open air
 #define COLS 32
 #define ROWS 24
@@ -141,18 +144,21 @@ void drawpixels(float *p, uint8_t rows, uint8_t cols) {
 	img.pushSprite(0, 0);
 
 	msg.fillScreen(TFT_BLACK);
-	msg.setTextColor(TFT_YELLOW);
 	msg.setCursor(11, 3);
+	msg.setTextColor(TFT_WHITE);
+	msg.printf("Battery:%3d %%", battery.calcBatteryPercent());
+	msg.setTextColor(TFT_YELLOW);
+	msg.setCursor(11, 3 + 12 * 1);
 	msg.print("min tmp");
-	msg.setCursor(13, 3 + 12);
+	msg.setCursor(13, 3 + 12 * 2);
 	msg.printf("%.2fC", min_v);
-	msg.setCursor(11, 3 + 12 * 2);
+	msg.setCursor(11, 3 + 12 * 3);
 	msg.print("max tmp");
-	msg.setCursor(13, 3 + 12 * 3);
+	msg.setCursor(13, 3 + 12 * 4);
 	msg.printf("%.2fC", max_v);
-	msg.setCursor(11, 3 + 12 * 4);
+	msg.setCursor(11, 3 + 12 * 5);
 	msg.print("tmp mode");
-	msg.setCursor(13, 3 + 12 * 5);
+	msg.setCursor(13, 3 + 12 * 6);
 	msg.print((String)view_temp_autoAdjust_interval_call_flg);
 
 	msg.pushSprite(COLS_4, 10);
@@ -178,9 +184,10 @@ void colorList_add() {
 		M5.Lcd.drawRect(icol * 2, 127, 2, 12, camColors[icol * 2]);
 	}
 }
+
 void setup() {
 	M5.begin();
-	M5.IMU.Init();
+	M5.IMU.Init();	// ジャイロモジュール初期化
 
 	// Increase I2C clock speed to 450kHz
 	Wire.begin(0, 26, 400000);

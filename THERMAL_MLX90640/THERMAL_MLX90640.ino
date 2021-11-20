@@ -273,29 +273,6 @@ void loop() {
 		prev_loopTime = millis();
 	}
 
-	if (M5.Axp.GetBtnPress() == 0x02) {
-		esp_restart();
-	}
-
-	// Reset settings
-	if (M5.BtnA.pressedFor(1000)) {
-		mintemp = min_v - 1;
-		maxtemp = max_v + 1;
-	}
-
-	// Set Min Value - SortPress //
-	if (M5.BtnA.wasPressed()) {
-		if (mintemp <= 0) {
-			mintemp = maxtemp - 1;
-		} else {
-			mintemp--;
-		}
-	}
-
-	if (M5.BtnB.wasPressed()) {
-		maxtemp = maxtemp + 1;
-	}
-
 	uint16_t mlx90640Frame[834];
 
 	// those fun get tmp array, 32*24, 5fps

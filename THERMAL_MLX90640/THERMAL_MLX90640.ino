@@ -20,8 +20,8 @@ Battery battery = Battery();
 #define TA_SHIFT 8	// Default shift for MLX90640 in open air
 #define COLS 32
 #define ROWS 24
-#define COLS_4 (COLS * 4 - 2)
-#define ROWS_4 (ROWS * 4 - 2)
+#define COLS_4 (COLS * 5)
+#define ROWS_4 (ROWS * 5)
 #define pixelsArraySize (COLS * ROWS)
 #define INTERPOLATED_COLS 32
 #define INTERPOLATED_ROWS 32
@@ -31,7 +31,7 @@ float reversePixels[COLS * ROWS];
 float pixels_4[COLS_4 * ROWS_4];
 
 #define get_pixels(x, y) (pixels[y * COLS + x])
-#define get_pixels_5(x, y) (pixels_4[(y)*4 * COLS_4 + x])
+#define get_pixels_5(x, y) (pixels_4[(y)*5 * COLS_4 + x])
 
 byte speed_setting = 2;	 // High is 1 , Low is 2
 bool reverseScreen = false;
@@ -91,23 +91,25 @@ void cover5() {
 	for (y = 0; y < ROWS - 1; y++) {
 		for (x = 0; x < COLS - 1; x++) {
 			pixel_value = get_pixels(x, y);
-			x_step = (get_pixels(x + 1, y) - pixel_value) / 4.0;
-			pos = 4 * x + COLS_4 * (y * 4);
+			x_step = (get_pixels(x + 1, y) - pixel_value) / 5.0;
+			pos = 5 * x + COLS_4 * (y * 5);
 			pixels_4[pos] = pixel_value + x_step;
 			pixels_4[pos + 1] = pixels_4[pos] + x_step;
 			pixels_4[pos + 2] = pixels_4[pos + 1] + x_step;
 			pixels_4[pos + 3] = pixels_4[pos + 2] + x_step;
+			pixels_4[pos + 4] = pixels_4[pos + 3] + x_step;
 		}
 	}
 
 	for (y = 0; y < ROWS - 1; y++) {
 		for (x = 0; x < COLS_4; x++) {
 			pixel_value = get_pixels_5(x, y);
-			y_step = (get_pixels_5(x, y + 1) - pixel_value) / 4.0;
+			y_step = (get_pixels_5(x, y + 1) - pixel_value) / 5.0;
 			pixels_4[(4 * y + 1) * COLS_4 + x] = pixel_value + y_step;
 			pixels_4[(4 * y + 2) * COLS_4 + x] = pixel_value + 2 * y_step;
 			pixels_4[(4 * y + 3) * COLS_4 + x] = pixel_value + 3 * y_step;
 			pixels_4[(4 * y + 4) * COLS_4 + x] = pixel_value + 4 * y_step;
+			pixels_4[(4 * y + 5) * COLS_4 + x] = pixel_value + 5 * y_step;
 		}
 	}
 }
@@ -141,12 +143,17 @@ void drawpixels(float *p, uint8_t rows, uint8_t cols) {
 	img.setCursor(COLS_4 / 2 + 6, ROWS_4 / 2 - 12);
 	img.setTextColor(TFT_WHITE);
 	img.printf("%.2fC", get_point(p, rows, cols, cols / 2, rows / 2));
+	if (reverseScreen) {
+		img.setRotation(3);
+	} else {
+		img.setRotation(1);
+	}
 	img.pushSprite(0, 0);
 
 	msg.fillScreen(TFT_BLACK);
 	msg.setCursor(11, 3);
 	msg.setTextColor(TFT_WHITE);
-	msg.printf("Battery:%3d %%", battery.calcBatteryPercent());
+	msg.printf("Bat:%3d %%", battery.calcBatteryPercent());
 	msg.setTextColor(TFT_YELLOW);
 	msg.setCursor(11, 3 + 12 * 1);
 	msg.print("min tmp");
@@ -174,6 +181,7 @@ void display_rotation_horizontal() {
 		M5.Lcd.setRotation(rotation);
 		M5.Lcd.fillScreen(TFT_BLACK);
 		now_rotation = rotation;
+		reverseScreen = reverseScreen ? false : true;
 		colorList_add();
 	}
 }
@@ -298,6 +306,7 @@ void loop() {
 	// xxx.send(reversePixels, 32*24);
 
 	// Reverse image (order of Integer array)
+	// if (reverseScreen == false) {
 	for (int x = 0; x < pixelsArraySize; x++) {
 		if (x % COLS == 0) {
 			for (int j = 0 + x, k = (COLS - 1) + x; j < COLS + x; j++, k--) {
@@ -305,6 +314,15 @@ void loop() {
 			}
 		}
 	}
+	// } else {
+	// 	for (int x = pixelsArraySize - 1; x > 0; x--) {
+	// 		if (x % COLS == 0) {
+	// 			for (int j = 0 + x, k = ROWS + x; j > x; j--) {
+	// 				pixels[j] = reversePixels[j];
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	max_v = mintemp;
 	min_v = maxtemp;

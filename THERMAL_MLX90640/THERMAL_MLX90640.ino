@@ -306,23 +306,23 @@ void loop() {
 	// xxx.send(reversePixels, 32*24);
 
 	// Reverse image (order of Integer array)
-	// if (reverseScreen == false) {
-	for (int x = 0; x < pixelsArraySize; x++) {
-		if (x % COLS == 0) {
-			for (int j = 0 + x, k = (COLS - 1) + x; j < COLS + x; j++, k--) {
-				pixels[j] = reversePixels[k];
+	if (reverseScreen == false) {
+		for (int x = 0; x < pixelsArraySize; x++) {
+			if (x % COLS == 0) {
+				for (int j = 0 + x, k = (COLS - 1) + x; j < COLS + x; j++, k--) {
+					pixels[j] = reversePixels[k];
+				}
+			}
+		}
+	} else {
+		for (int x = pixelsArraySize - 1; x > 0; x--) {
+			if (x % COLS == 0) {
+				for (int j = pixelsArraySize - x - COLS, k = x; j < pixelsArraySize - x; j++, k++) {
+					pixels[j] = reversePixels[k];
+				}
 			}
 		}
 	}
-	// } else {
-	// 	for (int x = pixelsArraySize - 1; x > 0; x--) {
-	// 		if (x % COLS == 0) {
-	// 			for (int j = 0 + x, k = ROWS + x; j > x; j--) {
-	// 				pixels[j] = reversePixels[j];
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	max_v = mintemp;
 	min_v = maxtemp;

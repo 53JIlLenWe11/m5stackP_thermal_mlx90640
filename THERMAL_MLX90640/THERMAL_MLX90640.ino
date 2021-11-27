@@ -142,12 +142,7 @@ void drawpixels(float *p, uint8_t rows, uint8_t cols) {
 	img.drawLine(COLS_4 / 2, ROWS_4 / 2 - 8, COLS_4 / 2, ROWS_4 / 2 + 8, TFT_WHITE);  // horizontal line
 	img.setCursor(COLS_4 / 2 + 6, ROWS_4 / 2 - 12);
 	img.setTextColor(TFT_WHITE);
-	img.printf("%.2fC", get_point(p, rows, cols, cols / 2, rows / 2));
-	if (reverseScreen) {
-		img.setRotation(3);
-	} else {
-		img.setRotation(1);
-	}
+	img.printf("%.1fC", get_point(p, rows, cols, cols / 2, rows / 2));
 	img.pushSprite(0, 0);
 
 	msg.fillScreen(TFT_BLACK);
@@ -158,15 +153,13 @@ void drawpixels(float *p, uint8_t rows, uint8_t cols) {
 	msg.setCursor(11, 3 + 12 * 1);
 	msg.print("min tmp");
 	msg.setCursor(13, 3 + 12 * 2);
-	msg.printf("%.2fC", min_v);
+	msg.printf("%.1fC", min_v);
 	msg.setCursor(11, 3 + 12 * 3);
 	msg.print("max tmp");
 	msg.setCursor(13, 3 + 12 * 4);
-	msg.printf("%.2fC", max_v);
+	msg.printf("%.1fC", max_v);
 	msg.setCursor(11, 3 + 12 * 5);
-	msg.print("tmp mode");
-	msg.setCursor(13, 3 + 12 * 6);
-	msg.print((String)view_temp_autoAdjust_interval_call_flg);
+	msg.printf("tmp mode: %d", view_temp_autoAdjust_interval_call_flg);
 
 	msg.pushSprite(COLS_4, 10);
 }

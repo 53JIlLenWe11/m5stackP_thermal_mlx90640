@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-float get_point(float *p, uint8_t rows, uint8_t cols, int8_t x, int8_t y);
+float get_point(float *p, uint8_t rows, uint8_t cols, uint8_t x, uint8_t y);
 void set_point(float *p, uint8_t rows, uint8_t cols, int8_t x, int8_t y, float f);
 void get_adjacents_1d(float *src, float *dest, uint8_t rows, uint8_t cols, int8_t x, int8_t y);
 void get_adjacents_2d(float *src, float *dest, uint8_t rows, uint8_t cols, int8_t x, int8_t y);
@@ -10,7 +10,7 @@ void interpolate_image(float *src, uint8_t src_rows, uint8_t src_cols,
                        float *dest, uint8_t dest_rows, uint8_t dest_cols);
 
 
-float get_point(float *p, uint8_t rows, uint8_t cols, int8_t x, int8_t y) {
+float get_point(float *p, uint8_t rows, uint8_t cols, uint8_t x, uint8_t y) {
   if (x < 0)        x = 0;
   if (y < 0)        y = 0;
   if (x >= cols)    x = cols - 1;

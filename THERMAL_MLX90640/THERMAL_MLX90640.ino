@@ -72,7 +72,7 @@ const uint16_t camColors[] = {
 	0xF060, 0xF040, 0xF020, 0xF800,
 };
 
-float get_point(float *p, uint8_t rows, uint8_t cols, int8_t x, int8_t y);
+float get_point(float *p, uint8_t rows, uint8_t cols, uint8_t x, uint8_t y);
 
 long loopTime, startTime, endTime, fps, prev_loopTime;
 long update_interval = 2000;
@@ -118,8 +118,8 @@ void drawpixels(float *p, uint8_t rows, uint8_t cols) {
 	int colorTemp;
 	Serial.printf("%f, %f\r\n", mintemp, maxtemp);
 
-	for (int y = 0; y < rows; y++) {
-		for (int x = 0; x < cols; x++) {
+	for (uint8_t y = 0; y < rows; y++) {
+		for (uint8_t x = 0; x < cols; x++) {
 			float val = get_point(p, rows, cols, x, y);
 
 			if (val >= maxtemp) {

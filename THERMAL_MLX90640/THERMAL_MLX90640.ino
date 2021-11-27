@@ -315,7 +315,7 @@ void loop() {
 			}
 		}
 	} else {
-		for (int x = pixelsArraySize - 1; x > 0; x--) {
+		for (int x = pixelsArraySize - 1; x >= 0; x--) {
 			if (x % COLS == 0) {
 				for (int j = pixelsArraySize - x - COLS, k = x; j < pixelsArraySize - x; j++, k++) {
 					pixels[j] = reversePixels[k];

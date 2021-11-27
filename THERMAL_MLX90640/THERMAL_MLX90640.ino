@@ -20,8 +20,9 @@ Battery battery = Battery();
 #define TA_SHIFT 8	// Default shift for MLX90640 in open air
 #define COLS 32
 #define ROWS 24
-#define COLS_4 (COLS * 5)
-#define ROWS_4 (ROWS * 5)
+#define DIAMETER 5	// サーモ画像の拡大倍率
+#define COLS_4 (COLS * DIAMETER)
+#define ROWS_4 (ROWS * DIAMETER)
 #define pixelsArraySize (COLS * ROWS)
 #define INTERPOLATED_COLS 32
 #define INTERPOLATED_ROWS 32
@@ -31,7 +32,7 @@ float reversePixels[COLS * ROWS];
 float pixels_4[COLS_4 * ROWS_4];
 
 #define get_pixels(x, y) (pixels[y * COLS + x])
-#define get_pixels_5(x, y) (pixels_4[(y)*5 * COLS_4 + x])
+#define get_pixels_5(x, y) (pixels_4[(y)*DIAMETER * COLS_4 + x])
 
 byte speed_setting = 2;	 // High is 1 , Low is 2
 bool reverseScreen = false;
@@ -78,8 +79,8 @@ long loopTime, startTime, endTime, fps, prev_loopTime;
 long update_interval = 2000;
 bool view_temp_autoAdjust_interval_call_flg = true;
 
-// cover 1 --> 5, 32 * 24 --> 160 * 120
-// cover 1 --> 6, 32 * 24 -*6-> 192 * 144
+// cover 1 --> 4, 32 * 24 --> 128 * 96
+// cover 1 --> 5, 32 * 24 -*5-> 160 * 120
 void cover5() {
 	uint8_t x, y;
 	uint16_t pos = 0;
@@ -88,11 +89,12 @@ void cover5() {
 	float pixel_value = 0.0;
 	float max_step = 0;
 
-	for (y = 0; y < ROWS - 1; y++) {
-		for (x = 0; x < COLS - 1; x++) {
+	// X軸の拡大
+	for (y = 0; y < ROWS; y++) {
+		for (x = 0; x < COLS; x++) {
 			pixel_value = get_pixels(x, y);
-			x_step = (get_pixels(x + 1, y) - pixel_value) / 5.0;
-			pos = 5 * x + COLS_4 * (y * 5);
+			x_step = (get_pixels(x + 1, y) - pixel_value) / (float)DIAMETER;
+			pos = DIAMETER * x + COLS_4 * (y * DIAMETER);
 			pixels_4[pos] = pixel_value + x_step;
 			pixels_4[pos + 1] = pixels_4[pos] + x_step;
 			pixels_4[pos + 2] = pixels_4[pos + 1] + x_step;
@@ -101,15 +103,16 @@ void cover5() {
 		}
 	}
 
-	for (y = 0; y < ROWS - 1; y++) {
+	// y軸の拡大
+	for (y = 0; y < ROWS; y++) {
 		for (x = 0; x < COLS_4; x++) {
 			pixel_value = get_pixels_5(x, y);
-			y_step = (get_pixels_5(x, y + 1) - pixel_value) / 5.0;
-			pixels_4[(4 * y + 1) * COLS_4 + x] = pixel_value + y_step;
-			pixels_4[(4 * y + 2) * COLS_4 + x] = pixel_value + 2 * y_step;
-			pixels_4[(4 * y + 3) * COLS_4 + x] = pixel_value + 3 * y_step;
-			pixels_4[(4 * y + 4) * COLS_4 + x] = pixel_value + 4 * y_step;
-			pixels_4[(4 * y + 5) * COLS_4 + x] = pixel_value + 5 * y_step;
+			y_step = (get_pixels_5(x, y + 1) - pixel_value) / (float)DIAMETER;
+			pixels_4[(DIAMETER * y + 1) * COLS_4 + x] = pixel_value + y_step;
+			pixels_4[(DIAMETER * y + 2) * COLS_4 + x] = pixel_value + 2 * y_step;
+			pixels_4[(DIAMETER * y + 3) * COLS_4 + x] = pixel_value + 3 * y_step;
+			pixels_4[(DIAMETER * y + 4) * COLS_4 + x] = pixel_value + 4 * y_step;
+			// pixels_4[(DIAMETER * y + 5) * COLS_4 + x] = pixel_value + 5 * y_step;
 		}
 	}
 }

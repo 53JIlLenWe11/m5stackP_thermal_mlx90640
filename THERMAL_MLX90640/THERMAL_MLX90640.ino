@@ -77,7 +77,7 @@ float get_point(float *p, uint8_t rows, uint8_t cols, uint8_t x, uint8_t y);
 
 long loopTime, startTime, endTime, fps, prev_loopTime;
 long update_interval = 2000;
-bool view_temp_autoAdjust_interval_call_flg = true;
+bool view_temp_autoAdjust_interval_call_flg = false;
 
 // cover 1 --> 4, 32 * 24 --> 128 * 96
 // cover 1 --> 5, 32 * 24 -*5-> 160 * 120

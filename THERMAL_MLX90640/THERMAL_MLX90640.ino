@@ -186,10 +186,15 @@ void drawpixels(float *p, uint8_t rows, uint8_t cols) {
 
 // 横
 int now_rotation = 1;
+float old_pitch = 0;
 void display_rotation_horizontal() {
 	float pitch, roll, yaw;
 	M5.IMU.getAhrsData(&pitch, &roll, &yaw);
-	int rotation = (pitch < 0) ? 1 : 3;
+	// 変化量が一定量以下ならスキップ
+	if (abs(old_pitch - pitch) < 8) return;
+
+	int rotation = (pitch < old_pitch) ? 1 : 3;
+	old_pitch = pitch;
 	if (now_rotation != rotation) {
 		M5.Lcd.setRotation(rotation);
 		M5.Lcd.fillScreen(TFT_BLACK);

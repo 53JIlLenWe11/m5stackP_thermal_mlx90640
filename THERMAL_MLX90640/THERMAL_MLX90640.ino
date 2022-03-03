@@ -260,20 +260,21 @@ void btn_event() {
 	}
 
 	// 計測温度によるReset settings
-	if (M5.BtnA.pressedFor(1000)) {
-		view_temp_autoAdjust();
+	if (M5.BtnA.pressedFor(500)) {
+		subtract_mintemp();
 	}
 	// Set Min Value - SortPress // 表示時の最大温度-1
 	if (M5.BtnA.wasPressed()) {
-		subtract_mintemp();
+		// subtract_mintemp();
+		view_temp_autoAdjust();
 	}
 
 	// 自動で温度色調の変更を実行するかの切り替え
-	if (M5.BtnB.wasReleasefor(1000)) {	// ms以上押して離したか
-		view_temp_autoAdjust_interval_call_flg = view_temp_autoAdjust_interval_call_flg ? false : true;
+	if (M5.BtnB.wasReleasefor(500)) {  // ms以上押して離したか
+		add_maxtemp();
 	}
 	if (M5.BtnB.wasPressed()) {	 // 表示時の最大温度+1
-		add_maxtemp();
+		view_temp_autoAdjust_interval_call_flg = view_temp_autoAdjust_interval_call_flg ? false : true;
 	}
 }
 

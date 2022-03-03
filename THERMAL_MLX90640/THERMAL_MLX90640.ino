@@ -119,7 +119,7 @@ void cover5() {
 
 void drawpixels(float *p, uint8_t rows, uint8_t cols) {
 	int colorTemp;
-	Serial.printf("%f, %f\r\n", mintemp, maxtemp);
+	Serial.printf("colorTmp min:%.2f,max:%.2f\n", mintemp, maxtemp);
 
 	for (uint8_t y = 0; y < rows; y++) {
 		for (uint8_t x = 0; x < cols; x++) {

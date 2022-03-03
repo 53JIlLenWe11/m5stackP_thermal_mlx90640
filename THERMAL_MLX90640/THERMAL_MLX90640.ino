@@ -171,12 +171,15 @@ void drawpixels(float *p, uint8_t rows, uint8_t cols) {
 	msg.printf("%.1fC", max_v);
 	msg.setTextSize(1);
 
-	msg.setCursor(0, 3 + 10 * 9);
-	msg.printf("auto tmp: %d", view_temp_autoAdjust_interval_call_flg);
+	msg.setCursor(0, 10 * 8);
+	msg.printf("autoAdjust:%d", view_temp_autoAdjust_interval_call_flg);
 
+	msg.setTextColor(TFT_GREEN);
+	msg.setCursor(0, 10 * 9);
+	msg.printf("usb:%.2fmA", M5.Axp.GetVBusCurrent());
+	msg.setCursor(0, 10 * 10);
 	msg.setTextColor(TFT_RED);
-	msg.setCursor(0, 3 + 10 * 10);
-	msg.printf("cu: %.2fmA", M5.Axp.GetVBusCurrent());
+	msg.printf("bat:%.2fmA", M5.Axp.GetBatCurrent());
 
 	msg.pushSprite(COLS_4 + 5, 5);
 }

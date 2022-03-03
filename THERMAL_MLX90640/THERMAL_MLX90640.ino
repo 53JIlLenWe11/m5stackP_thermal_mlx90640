@@ -194,7 +194,7 @@ void setup() {
 	M5.IMU.Init();	// ジャイロモジュール初期化
 
 	// Increase I2C clock speed to 450kHz
-	Wire.begin(0, 26, 400000);
+	Wire.begin(0, 26, (uint32_t)400000);
 	M5.Lcd.setRotation(1);
 
 	// use show tmp bitmap

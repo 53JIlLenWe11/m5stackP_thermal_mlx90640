@@ -149,22 +149,36 @@ void drawpixels(float *p, uint8_t rows, uint8_t cols) {
 	img.pushSprite(0, 0);
 
 	msg.fillScreen(TFT_BLACK);
-	msg.setCursor(11, 3);
+	msg.setCursor(0, 0);
 	msg.setTextColor(TFT_WHITE);
 	msg.printf("Bat:%3d %%", battery.calcBatteryPercent());
-	msg.setTextColor(TFT_YELLOW);
-	msg.setCursor(11, 3 + 12 * 1);
-	msg.print("min tmp");
-	msg.setCursor(13, 3 + 12 * 2);
-	msg.printf("%.1fC", min_v);
-	msg.setCursor(11, 3 + 12 * 3);
-	msg.print("max tmp");
-	msg.setCursor(13, 3 + 12 * 4);
-	msg.printf("%.1fC", max_v);
-	msg.setCursor(11, 3 + 12 * 5);
-	msg.printf("tmp mode: %d", view_temp_autoAdjust_interval_call_flg);
+	msg.setTextColor(TFT_GREEN);
+	msg.setCursor(0, 10 * 1);
+	msg.printf("FPS: %d", fps);
 
-	msg.pushSprite(COLS_4, 10);
+	msg.setTextColor(TFT_YELLOW);
+	msg.setCursor(0, 10 * 2);
+	msg.print("min:");
+	msg.setTextSize(2);
+	msg.setCursor(0, 3 + 10 * 3);
+	msg.printf("%.1fC", min_v);
+	msg.setTextSize(1);
+
+	msg.setCursor(0, 3 + 10 * 5);
+	msg.print("max:");
+	msg.setTextSize(2);
+	msg.setCursor(0, 3 + 10 * 6);
+	msg.printf("%.1fC", max_v);
+	msg.setTextSize(1);
+
+	msg.setCursor(0, 3 + 10 * 9);
+	msg.printf("auto tmp: %d", view_temp_autoAdjust_interval_call_flg);
+
+	msg.setTextColor(TFT_RED);
+	msg.setCursor(0, 3 + 10 * 10);
+	msg.printf("cu: %.2fmA", M5.Axp.GetVBusCurrent());
+
+	msg.pushSprite(COLS_4 + 5, 5);
 }
 
 // 横
